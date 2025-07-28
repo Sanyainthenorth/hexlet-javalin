@@ -1,19 +1,10 @@
-@import org.example.hexlet.dto.users.UserPage
-@param UserPage page
-
-@template.layout.page(
-    content = @`
-        <h1>Профиль пользователя</h1>
-
-        <div class="user-profile">
-            <p><strong>ID:</strong> ${page.getUser().getId()}</p>
-            <p><strong>Имя:</strong> ${page.getUser().getName()}</p>
-            <p><strong>Email:</strong> ${page.getUser().getEmail()}</p>
-        </div>
-
-        <div class="actions">
-            <a href="/users/${page.getUser().getId()}/edit" class="btn">Редактировать</a>
-            <a href="/users" class="btn">Назад к списку</a>
-        </div>
-    `
-)
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Пользователь</title>
+</head>
+<body>
+    <h1>Пользователь: @userId</h1>
+</body>
+</html>

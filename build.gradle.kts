@@ -26,6 +26,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     compileOnly("org.projectlombok:lombok:1.18.30") // Основная зависимость
     annotationProcessor("org.projectlombok:lombok:1.18.30") // Для обработки аннотаций
+    implementation ("org.apache.commons:commons-text:1.10.0")
 }
 
 tasks.test {
