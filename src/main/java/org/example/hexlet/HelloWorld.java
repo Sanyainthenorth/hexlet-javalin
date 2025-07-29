@@ -2,13 +2,20 @@ package org.example.hexlet;
 
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
+import io.javalin.validation.ValidationError;
+import io.javalin.validation.ValidationException;
+import org.example.hexlet.dto.courses.BuildCoursePage;
 import org.example.hexlet.dto.courses.CoursePage;
 import org.example.hexlet.dto.courses.CoursesPage;
+import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.dto.users.UsersPage;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.model.User;
 import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
+
+import java.util.List;
+import java.util.Map;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -19,41 +26,37 @@ public class HelloWorld {
             config.fileRenderer(new JavalinJte());
             config.http.defaultContentType = "text/html; charset=utf-8";
         });
-
-        // Инициализация тестовых данных для курсов
+        // Инициализация тестовых данных
         CourseRepository.save(new Course("Java Basics", "Основы Java и ООП"));
-        CourseRepository.save(new Course("Spring", "Фреймворк Spring для веб-разработки"));
-        CourseRepository.save(new Course("Web Development", "HTML, CSS и JavaScript"));
-        CourseRepository.save(new Course("Database", "SQL и проектирование баз данных"));
-        CourseRepository.save(new Course("Algorithms", "Структуры данных и алгоритмы"));
-
-        // Инициализация тестовых данных для пользователей
         UserRepository.save(new User("John Doe", "john@example.com", "password123"));
-        UserRepository.save(new User("Jane Smith", "jane@example.com", "securepass"));
 
         // Основные маршруты
         app.get("/", ctx -> ctx.result("Hello World"));
 
-        // Обработчики для курсов
         app.get("/courses/build", ctx -> {
-            ctx.render("courses/build.jte");
+            var page = new BuildCoursePage();
+            ctx.render("courses/build.jte", model("page", page));
         });
 
         app.post("/courses", ctx -> {
-            try {
-                var name = ctx.formParam("name").trim();
-                var description = ctx.formParam("description").trim();
+            var name = ctx.formParam("name").trim();
+            var description = ctx.formParam("description").trim();
 
-                if (name.isEmpty() || description.isEmpty()) {
-                    ctx.status(400).result("Все поля обязательны");
-                    return;
-                }
+            try {
+                ctx.formParamAsClass("name", String.class)
+                   .check(n -> n.length() > 2, "Название должно быть длиннее 2 символов")
+                   .get();
+
+                ctx.formParamAsClass("description", String.class)
+                   .check(d -> d.length() > 10, "Описание должно быть длиннее 10 символов")
+                   .get();
 
                 var course = new Course(name, description);
                 CourseRepository.save(course);
                 ctx.redirect("/courses");
-            } catch (Exception e) {
-                ctx.status(500).result("Ошибка сервера: " + e.getMessage());
+            } catch (ValidationException e) {
+                var page = new BuildCoursePage(name, description, e.getErrors());
+                ctx.render("courses/build.jte", model("page", page));
             }
         });
 
@@ -74,29 +77,29 @@ public class HelloWorld {
             var page = new CoursePage(course);
             ctx.render("courses/show.jte", model("page", page));
         });
-
-
-        // Маршруты для пользователей
         app.get("/users/build", ctx -> {
-            ctx.render("users/build.jte");
+            var page = new BuildUserPage();
+            ctx.render("users/build.jte", model("page", page));
         });
 
         app.post("/users", ctx -> {
-            try {
-                var name = ctx.formParam("name").trim();
-                var email = ctx.formParam("email").trim().toLowerCase();
-                var password = ctx.formParam("password");
+            var name = ctx.formParam("name").trim();
+            var email = ctx.formParam("email").trim().toLowerCase();
+            var passwordConfirmation = ctx.formParam("passwordConfirmation");
 
-                if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    ctx.status(400).result("Все поля обязательны для заполнения");
-                    return;
-                }
+            try {
+                var password = ctx.formParamAsClass("password", String.class)
+                                  .check(p -> !p.isEmpty(), "Пароль не может быть пустым")
+                                  .check(p -> p.length() >= 6, "Пароль должен быть не менее 6 символов")
+                                  .check(p -> p.equals(passwordConfirmation), "Пароли не совпадают")
+                                  .get();
 
                 var user = new User(name, email, password);
                 UserRepository.save(user);
                 ctx.redirect("/users");
-            } catch (Exception e) {
-                ctx.status(500).result("Ошибка сервера: " + e.getMessage());
+            } catch (ValidationException e) {
+                var page = new BuildUserPage(name, email, e.getErrors());
+                ctx.render("users/build.jte", model("page", page));
             }
         });
 

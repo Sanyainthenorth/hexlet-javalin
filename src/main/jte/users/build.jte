@@ -1,43 +1,44 @@
-@import io.javalin.http.Context
+@import org.example.hexlet.dto.users.BuildUserPage
+@param BuildUserPage page
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Регистрация пользователя</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Регистрация нового пользователя</h1>
+<div class="container mt-5">
+    @if(page.getErrors() != null && !page.getErrors().isEmpty())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @for(var validator : page.getErrors().values())
+                    @for(var error : validator)
+                        <li>${error.getMessage()}</li>
+                    @endfor
+                @endfor
+            </ul>
+        </div>
+    @endif
 
-        <form action="/users" method="post">
-            <input type="hidden" name="_charset_" value="UTF-8">
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Имя
-                    <input type="text" name="name" class="form-control" required>
-                </label>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Email
-                    <input type="email" name="email" class="form-control" required>
-                </label>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Пароль
-                    <input type="password" name="password" class="form-control" required minlength="6">
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Зарегистрировать</button>
-        </form>
-    </div>
-</body>
-</html>
+    <form action="/users" method="post">
+        <div class="mb-3">
+            <label class="form-label">
+                Имя
+                <input type="text" name="name" class="form-control" value="${page.getName() != null ? page.getName() : ""}" required>
+            </label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                Email
+                <input type="email" name="email" class="form-control" value="${page.getEmail() != null ? page.getEmail() : ""}" required>
+            </label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                Пароль
+                <input type="password" name="password" class="form-control" required>
+            </label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                Подтверждение пароля
+                <input type="password" name="passwordConfirmation" class="form-control" required>
+            </label>
+        </div>
+        <input type="submit" value="Зарегистрировать" class="btn btn-primary">
+    </form>
+</div>
