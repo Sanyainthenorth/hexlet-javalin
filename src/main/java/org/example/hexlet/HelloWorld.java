@@ -26,19 +26,23 @@ public class HelloWorld {
             config.fileRenderer(new JavalinJte());
             config.http.defaultContentType = "text/html; charset=utf-8";
         });
+
         // Инициализация тестовых данных
         CourseRepository.save(new Course("Java Basics", "Основы Java и ООП"));
         UserRepository.save(new User("John Doe", "john@example.com", "password123"));
 
-        // Основные маршруты
-        app.get("/", ctx -> ctx.result("Hello World"));
+        // Основной маршрут
+        app.get(NamedRoutes.rootPath(), ctx -> {
+            ctx.render("index.jte");
+        });
 
-        app.get("/courses/build", ctx -> {
+        // Маршруты для курсов
+        app.get(NamedRoutes.buildCoursePath(), ctx -> {
             var page = new BuildCoursePage();
             ctx.render("courses/build.jte", model("page", page));
         });
 
-        app.post("/courses", ctx -> {
+        app.post(NamedRoutes.coursesPath(), ctx -> {
             var name = ctx.formParam("name").trim();
             var description = ctx.formParam("description").trim();
 
@@ -53,21 +57,21 @@ public class HelloWorld {
 
                 var course = new Course(name, description);
                 CourseRepository.save(course);
-                ctx.redirect("/courses");
+                ctx.redirect(NamedRoutes.coursesPath());
             } catch (ValidationException e) {
                 var page = new BuildCoursePage(name, description, e.getErrors());
                 ctx.render("courses/build.jte", model("page", page));
             }
         });
 
-        app.get("/courses", ctx -> {
+        app.get(NamedRoutes.coursesPath(), ctx -> {
             String term = ctx.queryParam("term");
             var courses = CourseRepository.search(term);
             var page = new CoursesPage(courses, "Каталог курсов", term);
             ctx.render("courses/index.jte", model("page", page));
         });
 
-        app.get("/courses/{id}", ctx -> {
+        app.get(NamedRoutes.coursePath("{id}"), ctx -> {
             var id = Long.parseLong(ctx.pathParam("id"));
             var course = CourseRepository.find(id).orElse(null);
             if (course == null) {
@@ -77,12 +81,14 @@ public class HelloWorld {
             var page = new CoursePage(course);
             ctx.render("courses/show.jte", model("page", page));
         });
-        app.get("/users/build", ctx -> {
+
+        // Маршруты для пользователей
+        app.get(NamedRoutes.buildUserPath(), ctx -> {
             var page = new BuildUserPage();
             ctx.render("users/build.jte", model("page", page));
         });
 
-        app.post("/users", ctx -> {
+        app.post(NamedRoutes.usersPath(), ctx -> {
             var name = ctx.formParam("name").trim();
             var email = ctx.formParam("email").trim().toLowerCase();
             var passwordConfirmation = ctx.formParam("passwordConfirmation");
@@ -96,20 +102,20 @@ public class HelloWorld {
 
                 var user = new User(name, email, password);
                 UserRepository.save(user);
-                ctx.redirect("/users");
+                ctx.redirect(NamedRoutes.usersPath());
             } catch (ValidationException e) {
                 var page = new BuildUserPage(name, email, e.getErrors());
                 ctx.render("users/build.jte", model("page", page));
             }
         });
 
-        app.get("/users", ctx -> {
+        app.get(NamedRoutes.usersPath(), ctx -> {
             var users = UserRepository.getEntities();
             var page = new UsersPage(users);
             ctx.render("users/index.jte", model("page", page));
         });
 
-        app.get("/users/{id}", ctx -> {
+        app.get(NamedRoutes.userPath("{id}"), ctx -> {
             var id = Long.parseLong(ctx.pathParam("id"));
             var user = UserRepository.find(id).orElse(null);
             if (user == null) {
@@ -120,7 +126,7 @@ public class HelloWorld {
         });
 
         // Дополнительные маршруты
-        app.get("/hello", ctx -> {
+        app.get(NamedRoutes.helloPath(), ctx -> {
             String name = ctx.queryParam("name");
             if (name == null || name.isEmpty()) {
                 name = "World";
@@ -128,7 +134,7 @@ public class HelloWorld {
             ctx.result("Hello, " + name + "!");
         });
 
-        app.get("/users/{id}/post/{postId}", ctx -> {
+        app.get(NamedRoutes.userPostPath("{id}", "{postId}"), ctx -> {
             String userId = ctx.pathParam("id");
             String postId = ctx.pathParam("postId");
             ctx.result("User ID: " + userId + ", Post ID: " + postId);
