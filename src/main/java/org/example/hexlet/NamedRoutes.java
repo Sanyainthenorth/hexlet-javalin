@@ -22,4 +22,19 @@ public class NamedRoutes {
     public static String userPostPath(String userId, String postId) {
         return "/users/" + userId + "/post/" + postId;
     }
+    public static String editUserPath(String id) {
+        return "/users/" + id + "/edit";
+    }
+
+    public static String editUserPath(long id) {
+        return editUserPath(String.valueOf(id));
+    }
+
+    public static String editCoursePath(String id) {
+        return "/courses/" + id + "/edit";
+    }
+
+    public static String editCoursePath(long id) {
+        return editCoursePath(String.valueOf(id));
+    }
 }

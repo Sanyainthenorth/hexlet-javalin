@@ -10,9 +10,20 @@ public class CourseRepository {
     private static long idCounter = 1;
 
     public static void save(Course course) {
-        course.setId(idCounter++);
-        entities.add(course);
+        // Если это новый курс (id == null), добавляем его с новым ID
+        if (course.getId() == null) {
+            course.setId(idCounter++);
+            entities.add(course);
+        } else {
+            // Если курс уже существует, ищем его и обновляем поля
+            var existingCourse = find(course.getId())
+                .orElseThrow(() -> new RuntimeException("Course with id = " + course.getId() + " not found"));
+            existingCourse.setName(course.getName());
+            existingCourse.setDescription(course.getDescription());
+            // Добавьте сюда при необходимости другие поля для обновления
+        }
     }
+
 
     public static List<Course> search(String term) {
         if (term == null || term.isEmpty()) {

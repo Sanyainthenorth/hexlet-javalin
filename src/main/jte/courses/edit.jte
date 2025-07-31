@@ -6,9 +6,11 @@
 @template.layout.page(
     content = @`
         <div class="container mt-5">
-            <h1>Создание курса</h1>
+            <h1>Редактирование курса</h1>
 
-            <form action="${NamedRoutes.coursesPath()}" method="post" class="mt-4">
+            <form action="${NamedRoutes.coursePath(page.getId())}" method="post" class="mt-4">
+                <!-- УДАЛИЛИ <input type="hidden" name="_method" value="patch"> -->
+
                 <div class="mb-3">
                     <label class="form-label">
                         Название
@@ -29,7 +31,7 @@
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Создать</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
                 <a href="${NamedRoutes.coursesPath()}" class="btn btn-secondary ms-2">Отмена</a>
             </form>
         </div>

@@ -10,8 +10,19 @@ public class UserRepository {
     private static long idCounter = 1;
 
     public static void save(User user) {
-        user.setId(idCounter++);
-        entities.add(user);
+        // Если это новый пользователь (без ID), добавляем его
+        if (user.getId() == null) {
+            user.setId(idCounter++);
+            entities.add(user);
+        }
+        // Если пользователь уже существует (есть ID), обновляем его
+        else {
+            var existingUser = find(user.getId())
+                .orElseThrow(() -> new RuntimeException("User with id = " + user.getId() + " not found"));
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPassword(user.getPassword());
+        }
     }
 
     public static List<User> getEntities() {
@@ -22,5 +33,11 @@ public class UserRepository {
         return entities.stream()
                        .filter(u -> u.getId().equals(id))
                        .findFirst();
+    }
+
+    public static void delete(Long id) {
+        var user = find(id)
+            .orElseThrow(() -> new RuntimeException("User with id = " + id + " not found"));
+        entities.remove(user);
     }
 }

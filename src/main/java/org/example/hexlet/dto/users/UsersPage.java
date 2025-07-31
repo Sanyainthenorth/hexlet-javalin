@@ -1,6 +1,7 @@
 package org.example.hexlet.dto.users;
 
 import org.example.hexlet.model.User;
+import org.example.hexlet.NamedRoutes;
 import java.util.List;
 
 public class UsersPage {
@@ -22,5 +23,10 @@ public class UsersPage {
 
     public String getTerm() {
         return term;
+    }
+
+    // Добавляем метод для получения пути создания пользователя
+    public String getBuildUserPath() {
+        return NamedRoutes.buildUserPath();
     }
 }
