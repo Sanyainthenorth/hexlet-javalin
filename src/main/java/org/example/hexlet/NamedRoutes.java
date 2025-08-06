@@ -37,4 +37,11 @@ public class NamedRoutes {
     public static String editCoursePath(long id) {
         return editCoursePath(String.valueOf(id));
     }
+    public static String sessionsPath() {
+        return "/sessions";
+    }
+
+    public static String buildSessionPath() {
+        return "/sessions/build";
+    }
 }

@@ -2,14 +2,19 @@ package org.example.hexlet;
 
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
-
 import org.example.hexlet.controller.CoursesController;
+import org.example.hexlet.controller.SessionsController;
 import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.model.User;
 import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import org.example.hexlet.dto.MainPage;
+
+import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class HelloWorld {
     public static void main(String[] args) {
@@ -19,12 +24,32 @@ public class HelloWorld {
             config.http.defaultContentType = "text/html; charset=utf-8";
         });
 
+        app.before(ctx -> {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            String method = ctx.method().name();
+            String path = ctx.path();
+            System.out.printf("[%s] %s %s%n", timestamp, method, path);
+        });
+
         // Инициализация тестовых данных
         CourseRepository.save(new Course("Java Basics", "Основы Java и ООП"));
         UserRepository.save(new User("John Doe", "john@example.com", "password123"));
 
-        // Основной маршрут
-        app.get(NamedRoutes.rootPath(), ctx -> ctx.render("index.jte"));
+        app.get("/", ctx -> {
+            Boolean visited = ctx.cookie("visited") != null;
+            String currentUser = ctx.sessionAttribute("currentUser");
+            var page = new MainPage(visited, currentUser);
+            ctx.render("index.jte", model("page", page));
+
+            if (!visited) {
+                ctx.cookie("visited", "true");
+            }
+        });
+
+        // Маршруты для сессий
+        app.get(NamedRoutes.buildSessionPath(), SessionsController::build);
+        app.post(NamedRoutes.sessionsPath(), SessionsController::create);
+        app.delete(NamedRoutes.sessionsPath(), SessionsController::destroy);
 
         // Маршруты для курсов
         app.get(NamedRoutes.coursesPath(), CoursesController::index);
@@ -32,8 +57,7 @@ public class HelloWorld {
         app.post(NamedRoutes.coursesPath(), CoursesController::create);
         app.get(NamedRoutes.coursePath("{id}"), CoursesController::show);
         app.get(NamedRoutes.editCoursePath("{id}"), CoursesController::edit);
-        //app.patch(NamedRoutes.coursePath("{id}"), CoursesController::update);
-        app.post("/courses/{id}", CoursesController::update);
+        app.post(NamedRoutes.coursePath("{id}"), CoursesController::update);
         app.post(NamedRoutes.coursePath("{id}") + "/delete", CoursesController::destroyByPost);
 
         // Маршруты для пользователей

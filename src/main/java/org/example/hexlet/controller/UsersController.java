@@ -11,6 +11,7 @@ import org.example.hexlet.model.User;
 import org.example.hexlet.repository.UserRepository;
 
 import java.util.Collections;
+import java.util.Objects;
 
 public class UsersController {
     public static void index(Context ctx) {
@@ -33,31 +34,49 @@ public class UsersController {
     }
 
     public static void create(Context ctx) {
-        var name = ctx.formParam("name").trim();
-        var email = ctx.formParam("email").trim().toLowerCase();
-        var password = ctx.formParam("password");
-        var passwordConfirmation = ctx.formParam("passwordConfirmation");
-
         try {
+            // Получаем параметры с проверкой на null
+            String name = ctx.formParam("name");
+            String email = ctx.formParam("email");
+            String password = ctx.formParam("password");
+            String passwordConfirmation = ctx.formParam("passwordConfirmation");
+
+            // Валидация
             ctx.formParamAsClass("name", String.class)
-               .check(n -> !n.isEmpty(), "Имя не может быть пустым")
+               .check(Objects::nonNull, "Имя обязательно для заполнения")
+               .check(n -> !n.trim().isEmpty(), "Имя не может быть пустым")
                .get();
 
             ctx.formParamAsClass("email", String.class)
+               .check(Objects::nonNull, "Email обязателен для заполнения")
                .check(e -> e.matches(".+@.+\\..+"), "Некорректный email")
                .get();
 
             ctx.formParamAsClass("password", String.class)
+               .check(Objects::nonNull, "Пароль обязателен для заполнения")
                .check(p -> !p.isEmpty(), "Пароль не может быть пустым")
                .check(p -> p.length() >= 6, "Пароль должен быть не менее 6 символов")
                .check(p -> p.equals(passwordConfirmation), "Пароли не совпадают")
                .get();
 
-            var user = new User(name, email, password);
+            // Создаем пользователя
+            var user = new User(
+                name.trim(),
+                email.trim().toLowerCase(),
+                password
+            );
+
             UserRepository.save(user);
             ctx.redirect(NamedRoutes.usersPath());
+
         } catch (ValidationException e) {
-            var page = new BuildUserPage(null, name, email, e.getErrors());
+            // Возвращаем ошибки в форму
+            var page = new BuildUserPage(
+                null,
+                ctx.formParam("name"),
+                ctx.formParam("email"),
+                e.getErrors()
+            );
             ctx.render("users/build.jte", Collections.singletonMap("page", page));
         }
     }
