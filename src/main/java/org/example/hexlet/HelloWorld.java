@@ -119,6 +119,8 @@ public class HelloWorld {
             ctx.result("User ID: " + userId + ", Post ID: " + postId);
         });
 
-        app.start(7070);
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
+        app.start(port);
+        //app.start(7070);
     }
 }
