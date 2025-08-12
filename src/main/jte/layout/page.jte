@@ -1,6 +1,9 @@
 @import gg.jte.Content
 @import org.example.hexlet.NamedRoutes
+@import org.example.hexlet.dto.BasePage
+
 @param Content content
+@param BasePage page = null
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -9,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sasha Courses</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
             --primary-color: #0d6efd;
@@ -99,6 +103,13 @@
     </nav>
 
     <main class="container">
+        @if(page != null && page.getFlash() != null && !page.getFlash().isEmpty())
+            <div class="alert alert-${page.getFlash().get("type")} alert-dismissible fade show mt-3" role="alert">
+                ${page.getFlash().get("message")}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         ${content}
     </main>
 
@@ -112,7 +123,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav-link');
+            const navLinks = document.querySelectorAll('.nav-link:not(.btn)');
 
             navLinks.forEach(link => {
                 const linkPath = link.getAttribute('href');

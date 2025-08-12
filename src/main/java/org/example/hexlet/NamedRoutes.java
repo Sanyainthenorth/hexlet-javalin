@@ -44,4 +44,15 @@ public class NamedRoutes {
     public static String buildSessionPath() {
         return "/sessions/build";
     }
+    public static String deleteCoursePath(String id) {
+        return "/courses/" + id + "/delete";
+    }
+    public static String deleteUserPath(Long id) {
+        return "/users/" + id + "/delete";
+    }
+
+    // Или альтернативный вариант (если нужно поддерживать оба типа):
+    public static String deleteUserPath(String id) {
+        return "/users/" + id + "/delete";
+    }
 }

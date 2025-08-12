@@ -9,8 +9,8 @@ import lombok.ToString;
 @ToString
 public class Course {
     private Long id;
-    private String name = ""; // Инициализация по умолчанию
-    private String description = ""; // Инициализация по умолчанию
+    private String name = "";
+    private String description = "";
 
     public Course(String name, String description) {
         this.name = name != null ? name : "";

@@ -5,33 +5,50 @@
 
 @template.layout.page(
     content = @`
-        <div class="container mt-5">
-            <h1>Создание курса</h1>
-
-            <form action="${NamedRoutes.coursesPath()}" method="post" class="mt-4">
-                <div class="mb-3">
-                    <label class="form-label">
-                        Название
-                        <input type="text" name="name" value="${page.getName()}" class="form-control" required>
-                    </label>
-                    @if (page.getError("name") != null)
-                        <div class="text-danger mt-1">${page.getError("name")}</div>
-                    @endif
+        <div class="container mt-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title mb-0">Создание нового курса</h1>
                 </div>
+                <div class="card-body">
+                    <form action="${NamedRoutes.coursesPath()}" method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название курса</label>
+                            <input type="text"
+                                   class="form-control ${page.getError("name") != null ? "is-invalid" : ""}"
+                                   id="name"
+                                   name="name"
+                                   value="${page.getName()}"
+                                   required>
+                            @if (page.getError("name") != null)
+                                <div class="invalid-feedback">${page.getError("name")}</div>
+                            @endif
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label">
-                        Описание
-                        <textarea name="description" class="form-control" required>${page.getDescription()}</textarea>
-                    </label>
-                    @if (page.getError("description") != null)
-                        <div class="text-danger mt-1">${page.getError("description")}</div>
-                    @endif
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание курса</label>
+                            <textarea class="form-control ${page.getError("description") != null ? "is-invalid" : ""}"
+                                      id="description"
+                                      name="description"
+                                      rows="5"
+                                      required>${page.getDescription()}</textarea>
+                            @if (page.getError("description") != null)
+                                <div class="invalid-feedback">${page.getError("description")}</div>
+                            @endif
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="${NamedRoutes.coursesPath()}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Создать
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Создать</button>
-                <a href="${NamedRoutes.coursesPath()}" class="btn btn-secondary ms-2">Отмена</a>
-            </form>
+            </div>
         </div>
-    `
+    `,
+    page = page
 )

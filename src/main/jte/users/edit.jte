@@ -6,51 +6,83 @@
 @template.layout.page(
     content = @`
         <div class="container mt-5">
-            <h1>Редактирование пользователя</h1>
-
-            <form action="${NamedRoutes.userPath(page.getId())}" method="post">
-                <input type="hidden" name="_method" value="patch">
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Имя
-                        <input type="text" name="name" value="${page.getName()}" class="form-control">
-                    </label>
-                    @if (page.getError("name") != null)
-                        <div class="text-danger">${page.getError("name")}</div>
-                    @endif
+            <!-- Flash сообщение -->
+            @if (page.getFlash() != null)
+                <div class="alert alert-${page.getFlash().get("type")} alert-dismissible fade show mb-4">
+                    ${page.getFlash().get("message")}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+            @endif
 
-                <div class="mb-3">
-                    <label class="form-label">
-                        Email
-                        <input type="email" name="email" value="${page.getEmail()}" class="form-control">
-                    </label>
-                    @if (page.getError("email") != null)
-                        <div class="text-danger">${page.getError("email")}</div>
-                    @endif
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title mb-0">
+                        <i class="bi bi-pencil-square"></i> Редактирование пользователя
+                    </h1>
                 </div>
+                <div class="card-body">
+                    <form action="${NamedRoutes.userPath(page.getId())}" method="post">
+                        <input type="hidden" name="_method" value="patch">
 
-                <div class="mb-3">
-                    <label class="form-label">
-                        Новый пароль (оставьте пустым, если не хотите менять)
-                        <input type="password" name="password" class="form-control">
-                    </label>
-                    @if (page.getError("password") != null)
-                        <div class="text-danger">${page.getError("password")}</div>
-                    @endif
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Имя</label>
+                            <input type="text"
+                                   name="name"
+                                   id="name"
+                                   value="${page.getName()}"
+                                   class="form-control ${page.getError("name") != null ? "is-invalid" : ""}">
+                            @if (page.getError("name") != null)
+                                <div class="invalid-feedback">${page.getError("name")}</div>
+                            @endif
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email"
+                                   name="email"
+                                   id="email"
+                                   value="${page.getEmail()}"
+                                   class="form-control ${page.getError("email") != null ? "is-invalid" : ""}">
+                            @if (page.getError("email") != null)
+                                <div class="invalid-feedback">${page.getError("email")}</div>
+                            @endif
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Новый пароль (оставьте пустым, если не хотите менять)
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   id="password"
+                                   class="form-control ${page.getError("password") != null ? "is-invalid" : ""}">
+                            @if (page.getError("password") != null)
+                                <div class="invalid-feedback">${page.getError("password")}</div>
+                            @endif
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="passwordConfirmation" class="form-label">
+                                Подтверждение пароля
+                            </label>
+                            <input type="password"
+                                   name="passwordConfirmation"
+                                   id="passwordConfirmation"
+                                   class="form-control">
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="${NamedRoutes.usersPath()}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Подтверждение пароля
-                        <input type="password" name="passwordConfirmation" class="form-control">
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a href="${NamedRoutes.usersPath()}" class="btn btn-secondary">Отмена</a>
-            </form>
+            </div>
         </div>
-    `
+    `,
+    page = page
 )

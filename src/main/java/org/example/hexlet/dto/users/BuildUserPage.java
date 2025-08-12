@@ -1,10 +1,13 @@
 package org.example.hexlet.dto.users;
 
 import io.javalin.validation.ValidationError;
+import org.example.hexlet.dto.BasePage;
+
 import java.util.List;
 import java.util.Map;
 
-public class BuildUserPage {
+public class BuildUserPage extends BasePage {
+
     private Long id;
     private String name;
     private String email;

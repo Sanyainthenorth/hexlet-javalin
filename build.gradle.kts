@@ -28,6 +28,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.30") // Основная зависимость
     annotationProcessor("org.projectlombok:lombok:1.18.30") // Для обработки аннотаций
     implementation ("org.apache.commons:commons-text:1.10.0")
+    implementation("com.h2database:h2:2.2.220")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 }
 
 tasks.test {

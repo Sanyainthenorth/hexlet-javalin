@@ -1,9 +1,11 @@
 package org.example.hexlet.dto.users;
 
+import org.example.hexlet.dto.BasePage;
 import org.example.hexlet.model.User;
 import org.example.hexlet.NamedRoutes;
 
-public class UserPage {
+
+public class UserPage extends BasePage {
     private User user;
 
     public UserPage(User user) {
