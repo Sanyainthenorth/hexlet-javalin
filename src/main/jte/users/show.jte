@@ -34,10 +34,6 @@
                                         <th scope="row">Email</th>
                                         <td>${page.getUser().getEmail()}</td>
                                     </tr>
-                                    <tr>
-                                        <th scope="row">Дата регистрации</th>
-                                        <td>${page.getUser().getCreatedAt()}</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>

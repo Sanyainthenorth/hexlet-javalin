@@ -2,6 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("java")
     application
 }
@@ -30,6 +31,7 @@ dependencies {
     implementation ("org.apache.commons:commons-text:1.10.0")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation ("org.postgresql:postgresql:42.6.0")
 }
 
 tasks.test {

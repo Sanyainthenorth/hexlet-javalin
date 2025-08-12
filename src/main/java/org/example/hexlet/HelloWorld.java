@@ -28,7 +28,9 @@ public class HelloWorld {
 
         // Настройка подключения к БД
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        String jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL",
+                                                      "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        hikariConfig.setJdbcUrl(jdbcUrl);
 
         var dataSource = new HikariDataSource(hikariConfig);
         BaseRepository.dataSource = dataSource;
