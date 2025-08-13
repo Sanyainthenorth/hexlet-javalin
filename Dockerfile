@@ -1,5 +1,7 @@
 FROM gradle:8.12.1-jdk21 AS builder
 
+COPY . .
+
 RUN ./gradlew clean build
 
 FROM eclipse-temurin:21-jre
